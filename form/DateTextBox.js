@@ -23,6 +23,19 @@ define([
 		//		The value of this widget as a JavaScript Date object, with only year/month/day specified.
 		//		If specified in markup, use the format specified in `stamp.fromISOString`.
 		//		set("value", ...) accepts either a Date object or a string.
-		value: new Date("")	// value.toString()="NaN"
+		value: new Date(""),	// value.toString()="NaN"
+		
+		validator: function(/*anything*/ value, /*__Constraints*/ constraints){
+		
+			var isValid = (new RegExp("^(?:" + this._getPatternAttr(constraints) + ")"+(this.required?"":"?")+"$")).test(value) &&
+				(!this.required || !this._isEmpty(value)) &&
+				(this._isEmpty(value) || this.parse(value, constraints) !== undefined); // Boolean
+
+			if(this.dropDown && isValid ==true){
+				this.dropDown.set('value', this.parse(value, constraints), false);
+			}
+
+			return isValid;
+		}
 	});
 });
